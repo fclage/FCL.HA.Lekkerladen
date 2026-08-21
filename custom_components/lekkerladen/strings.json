@@ -1,0 +1,67 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Lekkerladen",
+        "description": "Enter the email address of your Lekkerladen account. A 6-digit login code will be emailed (same as the Lekkerladen app).",
+        "data": {
+          "email": "Email"
+        }
+      },
+      "otp": {
+        "title": "Login code",
+        "description": "Enter the 6-digit code sent to {email}.",
+        "data": {
+          "otp": "Code"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Lekkerladen",
+        "description": "The Lekkerladen session expired. A new login code will be emailed.",
+        "data": {
+          "email": "Email"
+        }
+      }
+    },
+    "error": {
+      "invalid_email": "Enter a valid email address.",
+      "otp_send_failed": "Could not send a login code. Check the email address and try again.",
+      "invalid_otp": "The code is invalid or expired.",
+      "cannot_connect": "Could not connect to Lekkerladen.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This Lekkerladen account is already configured.",
+      "reauth_successful": "Re-authentication successful.",
+      "wrong_account": "The login code belongs to a different Lekkerladen account."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "month_energy": { "name": "Month energy" },
+      "ytd_energy": { "name": "Year energy" },
+      "month_sessions": { "name": "Month sessions" },
+      "ytd_sessions": { "name": "Year sessions" },
+      "ere_price": { "name": "ERE price" },
+      "ere_per_kwh": { "name": "ERE per kWh" },
+      "net_per_kwh": { "name": "Net per kWh" },
+      "month_payout": { "name": "Month estimated payout" },
+      "ytd_payout": { "name": "Year estimated payout" },
+      "payout_frequency": { "name": "Payout frequency" },
+      "partner": { "name": "Partner" },
+      "account_last_fetched": { "name": "Provider last fetched" },
+      "session_expires": { "name": "Login session expires" },
+      "contract_expires": { "name": "Contract expires" },
+      "latest_session_energy": { "name": "Latest session energy" },
+      "latest_session_start": { "name": "Latest session start" },
+      "latest_session_end": { "name": "Latest session end" },
+      "serial_number": { "name": "Serial number" }
+    },
+    "binary_sensor": {
+      "contract_active": { "name": "Contract active" },
+      "provider_token_valid": { "name": "Provider account valid" },
+      "mid_certified": { "name": "MID certified" },
+      "manual_session_upload": { "name": "Manual session upload needed" }
+    }
+  }
+}

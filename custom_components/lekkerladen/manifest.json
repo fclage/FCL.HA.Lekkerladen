@@ -1,0 +1,13 @@
+{
+  "domain": "lekkerladen",
+  "name": "Lekkerladen",
+  "codeowners": ["@fclage"],
+  "config_flow": true,
+  "documentation": "https://github.com/fclage/FCL.HA.Lekkerladen",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/fclage/FCL.HA.Lekkerladen/issues",
+  "loggers": ["custom_components.lekkerladen"],
+  "requirements": [],
+  "version": "0.1.0"
+}

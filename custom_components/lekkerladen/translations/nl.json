@@ -1,0 +1,67 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Lekkerladen",
+        "description": "Vul het e-mailadres van je Lekkerladen-account in. Je ontvangt een 6-cijferige inlogcode (hetzelfde als in de Lekkerladen-app).",
+        "data": {
+          "email": "E-mail"
+        }
+      },
+      "otp": {
+        "title": "Inlogcode",
+        "description": "Vul de 6-cijferige code in die naar {email} is gestuurd.",
+        "data": {
+          "otp": "Code"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Opnieuw inloggen bij Lekkerladen",
+        "description": "De Lekkerladen-sessie is verlopen. Er wordt een nieuwe inlogcode gemaild.",
+        "data": {
+          "email": "E-mail"
+        }
+      }
+    },
+    "error": {
+      "invalid_email": "Vul een geldig e-mailadres in.",
+      "otp_send_failed": "De inlogcode kon niet worden verstuurd. Controleer het e-mailadres.",
+      "invalid_otp": "De code is ongeldig of verlopen.",
+      "cannot_connect": "Geen verbinding met Lekkerladen.",
+      "unknown": "Onverwachte fout."
+    },
+    "abort": {
+      "already_configured": "Dit Lekkerladen-account is al geconfigureerd.",
+      "reauth_successful": "Opnieuw inloggen is gelukt.",
+      "wrong_account": "De inlogcode hoort bij een ander Lekkerladen-account."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "month_energy": { "name": "Energie deze maand" },
+      "ytd_energy": { "name": "Energie dit jaar" },
+      "month_sessions": { "name": "Sessies deze maand" },
+      "ytd_sessions": { "name": "Sessies dit jaar" },
+      "ere_price": { "name": "ERE-prijs" },
+      "ere_per_kwh": { "name": "ERE per kWh" },
+      "net_per_kwh": { "name": "Netto per kWh" },
+      "month_payout": { "name": "Geschatte uitbetaling deze maand" },
+      "ytd_payout": { "name": "Geschatte uitbetaling dit jaar" },
+      "payout_frequency": { "name": "Uitbetalingsfrequentie" },
+      "partner": { "name": "Partner" },
+      "account_last_fetched": { "name": "Laatst opgehaald bij aanbieder" },
+      "session_expires": { "name": "Inlogsessie verloopt" },
+      "contract_expires": { "name": "Contract verloopt" },
+      "latest_session_energy": { "name": "Laatste sessie energie" },
+      "latest_session_start": { "name": "Laatste sessie start" },
+      "latest_session_end": { "name": "Laatste sessie einde" },
+      "serial_number": { "name": "Serienummer" }
+    },
+    "binary_sensor": {
+      "contract_active": { "name": "Contract actief" },
+      "provider_token_valid": { "name": "Aanbieder-account geldig" },
+      "mid_certified": { "name": "MID-gecertificeerd" },
+      "manual_session_upload": { "name": "Handmatige sessie-upload nodig" }
+    }
+  }
+}
