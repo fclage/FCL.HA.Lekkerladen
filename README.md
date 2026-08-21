@@ -68,6 +68,10 @@ Payout sensors are estimates from the published rate. Actual settlement follows 
 
 No extra Python packages. The integration uses `aiohttp`, which ships with Home Assistant.
 
+## Snapshots
+<img width="1539" height="976" alt="image" src="https://github.com/user-attachments/assets/f1a72891-610c-4eeb-8c9a-8ee280717b0d" />
+
+
 ## Privacy
 
 Diagnostics redact the session token, email, EAN, phone, and address. Do not commit tokens or OTP codes.
