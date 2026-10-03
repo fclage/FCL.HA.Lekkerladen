@@ -6,40 +6,66 @@ Usage: python scripts/bump_version.py 0.1.1
 
 from __future__ import annotations
 
-import json
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "custom_components" / "lekkerladen" / "manifest.json"
-CONST = ROOT / "custom_components" / "lekkerladen" / "const.py"
-VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
+VERSION_RE = re.compile(r"\d+\.\d+\.\d+")
+MANIFEST_VERSION_RE = re.compile(r'("version"\s*:\s*")(\d+\.\d+\.\d+)(")')
+CONST_VERSION_RE = re.compile(
+    r'^(VERSION: Final = ")(\d+\.\d+\.\d+)(")\s*$',
+    re.MULTILINE,
+)
+
+
+def repo_file(*parts: str) -> Path:
+    """Resolve a repository path and refuse one that leaves ROOT."""
+    root = ROOT.resolve()
+    path = root.joinpath(*parts).resolve()
+    if not path.is_relative_to(root):
+        raise RuntimeError(f"Refusing to write outside the repository: {path}")
+    return path
+
+
+def require_version(raw: str) -> str:
+    matched = VERSION_RE.fullmatch(raw)
+    if matched is None:
+        return ""
+    return matched.group(0)
+
+
+def replace_version(path: Path, pattern: re.Pattern[str], version: str, label: str) -> str:
+    text = path.read_text(encoding="utf-8")
+    found = pattern.search(text)
+    if found is None:
+        print(f"Could not update version in {label}", file=sys.stderr)
+        raise SystemExit(1)
+    old = found.group(2)
+    updated = pattern.sub(rf"\g<1>{version}\g<3>", text, count=1)
+    path.write_text(updated, encoding="utf-8")
+    return old
 
 
 def main() -> int:
-    if len(sys.argv) != 2 or not VERSION_RE.match(sys.argv[1]):
-        print("Usage: python scripts/bump_version.py <major.minor.patch>", file=sys.stderr)
+    if len(sys.argv) != 2:
+        print(
+            "Usage: python scripts/bump_version.py <major.minor.patch>",
+            file=sys.stderr,
+        )
         return 2
-    version = sys.argv[1]
+    version = require_version(sys.argv[1])
+    if not version:
+        print(
+            "Usage: python scripts/bump_version.py <major.minor.patch>",
+            file=sys.stderr,
+        )
+        return 2
 
-    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    old = manifest.get("version")
-    manifest["version"] = version
-    MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-
-    const_text = CONST.read_text(encoding="utf-8")
-    new_const, n = re.subn(
-        r'^VERSION: Final = "[^"]+"',
-        f'VERSION: Final = "{version}"',
-        const_text,
-        count=1,
-        flags=re.M,
-    )
-    if n != 1:
-        print("Could not update VERSION in const.py", file=sys.stderr)
-        return 1
-    CONST.write_text(new_const, encoding="utf-8")
+    manifest = repo_file("custom_components", "lekkerladen", "manifest.json")
+    const = repo_file("custom_components", "lekkerladen", "const.py")
+    old = replace_version(manifest, MANIFEST_VERSION_RE, version, manifest.name)
+    replace_version(const, CONST_VERSION_RE, version, const.name)
 
     print(f"Version {old} → {version}")
     print("Next:")
