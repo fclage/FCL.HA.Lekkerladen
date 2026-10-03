@@ -5,6 +5,14 @@
 [![HA](https://img.shields.io/badge/Home%20Assistant-2024.12%2B-blue.svg)](https://www.home-assistant.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fclage_FCL.HA.Lekkerladen&metric=alert_status)](https://sonarcloud.io/dashboard?id=fclage_FCL.HA.Lekkerladen)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=fclage_FCL.HA.Lekkerladen&metric=bugs)](https://sonarcloud.io/dashboard?id=fclage_FCL.HA.Lekkerladen)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=fclage_FCL.HA.Lekkerladen&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=fclage_FCL.HA.Lekkerladen)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=fclage_FCL.HA.Lekkerladen&metric=code_smells)](https://sonarcloud.io/dashboard?id=fclage_FCL.HA.Lekkerladen)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fclage_FCL.HA.Lekkerladen&metric=security_rating)](https://sonarcloud.io/dashboard?id=fclage_FCL.HA.Lekkerladen)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=fclage_FCL.HA.Lekkerladen&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=fclage_FCL.HA.Lekkerladen)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=fclage_FCL.HA.Lekkerladen&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=fclage_FCL.HA.Lekkerladen)
+
 Unofficial custom integration for [Lekkerladen](https://www.lekkerladen.com/) — Dutch **ERE** compensation for home EV charging. It logs in the same way as the Lekkerladen app: your email, then a 6-digit code from the inbox.
 
 **Not affiliated with Lekkerladen.** Reverse-engineered from the public web app. Use at your own risk.
