@@ -8,6 +8,9 @@ from datetime import datetime, timezone
 import ha_free  # noqa: E402, F401  # registers lekkerladen_noha package
 
 from lekkerladen_noha.models import (  # noqa: E402
+    amsterdam_now,
+    contract_mandate,
+    current_year,
     current_year_month,
     estimate_eur,
     match_charger_sessions,
@@ -72,6 +75,65 @@ class ModelsTest(unittest.TestCase):
         self.assertEqual(dt.month, 8)
         self.assertIsNone(parse_iso(None))
         self.assertIsNone(parse_iso("not-a-date"))
+        self.assertIsNone(parse_iso(12))
+        self.assertIsNone(parse_iso(""))
+
+    def test_clock_helpers(self) -> None:
+        now = amsterdam_now()
+        self.assertIsNotNone(now.tzinfo)
+        self.assertEqual(current_year(now), now.year)
+        self.assertEqual(current_year(), now.year)
+        self.assertEqual(current_year_month(), now.strftime("%Y-%m"))
+
+    def test_missing_and_bad_numbers(self) -> None:
+        self.assertIsNone(month_energy_kwh(MONTHS, "1999-01"))
+        self.assertIsNone(month_session_count(MONTHS, "1999-01"))
+        self.assertIsNone(
+            month_energy_kwh([{"yearMonth": "2026-08", "totalKwh": ""}], "2026-08")
+        )
+        self.assertIsNone(
+            month_energy_kwh([{"yearMonth": "2026-08", "totalKwh": "nope"}], "2026-08")
+        )
+        self.assertIsNone(
+            month_session_count([{"yearMonth": "2026-08", "sessionCount": None}], "2026-08")
+        )
+        self.assertIsNone(
+            month_session_count([{"yearMonth": "2026-08", "sessionCount": "x"}], "2026-08")
+        )
+        rows = [
+            {"yearMonth": None, "totalKwh": 5, "sessionCount": 4},
+            {"yearMonth": "2026-01", "totalKwh": "nope", "sessionCount": "nope"},
+            {"yearMonth": "2026-02", "totalKwh": "", "sessionCount": None},
+            {"yearMonth": "2026-03", "totalKwh": {}, "sessionCount": {}},
+            {"yearMonth": "2026-04", "totalKwh": 2, "sessionCount": 1},
+        ]
+        self.assertEqual(year_energy_kwh(rows, 2026), 2)
+        self.assertEqual(year_session_count(rows, 2026), 1)
+
+    def test_rate_and_mandate_edges(self) -> None:
+        self.assertIsNone(net_eur_per_kwh(None, 0.2))
+        self.assertIsNone(net_eur_per_kwh({}, 0.2))
+        self.assertIsNone(net_eur_per_kwh({"perKwh": "nope"}, 0.2))
+        self.assertAlmostEqual(net_eur_per_kwh({"perKwh": "1.5"}, None) or 0, 1.5)
+        self.assertIsNone(estimate_eur(None, 1.0))
+        self.assertIsNone(estimate_eur(1.0, None))
+        self.assertEqual(contract_mandate(None), {})
+        self.assertEqual(contract_mandate({}), {})
+        self.assertEqual(contract_mandate({"mandate": "nope"}), {})
+        self.assertEqual(contract_mandate({"mandate": {"active": True}}), {"active": True})
+
+    def test_match_id_shapes(self) -> None:
+        charger = {"id": "prov:abc", "remoteId": ""}
+        matched = match_charger_sessions(
+            charger,
+            [
+                {"chargerId": ""},
+                {"chargerId": "abc", "energyDeliveredKwh": 1},
+                {"chargerId": "prov:abc", "energyDeliveredKwh": 2},
+                {},
+            ],
+        )
+        self.assertEqual([row["energyDeliveredKwh"] for row in matched], [1, 2])
 
 
 if __name__ == "__main__":

@@ -16,7 +16,9 @@ jobs:
         with:
           python-version: "3.13"
       - name: Run tests
-        run: python -m unittest discover -s tests -v
+        run: |
+          python -m pip install pillow tzdata
+          python -m unittest discover -s tests -v
 
   hacs:
     name: HACS
@@ -54,7 +56,7 @@ jobs:
           python-version: "3.13"
       - name: Unit tests with coverage
         run: |
-          python -m pip install coverage
+          python -m pip install coverage pillow tzdata
           python -m coverage run -m unittest discover -s tests -q
           python -m coverage xml -o coverage.xml
       - name: SonarQube Scan

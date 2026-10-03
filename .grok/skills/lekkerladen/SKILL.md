@@ -37,6 +37,7 @@ Do not ship integration/translation changes under the previous version.
 ## Tests
 
 ```bash
+python -m pip install pillow tzdata
 python -m unittest discover -s tests -v
 ```
 
