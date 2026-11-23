@@ -98,6 +98,10 @@ python scripts/bump_version.py 0.1.1
 
 API notes: [docs/api.md](docs/api.md).
 
+### 0.1.1
+
+Lekkerladen removed `POST /api/sessions` (it now 404s). The integration now reads recent sessions from `GET /api/sessions/years/{year}`, which is what the official web app uses.
+
 ## License
 
 [MIT](LICENSE)
