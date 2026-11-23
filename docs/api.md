@@ -54,7 +54,13 @@ Sessions last about seven days (`expiresAt`). Home Assistant triggers re-auth on
 | GET | `/api/ere-rate` | `{ date, erePrice, perKwh }` |
 | GET | `/api/contracts/current` | Mandate (EAN, commission, expiry) |
 | GET | `/api/sessions/monthly` | Monthly kWh + session counts |
-| POST | `/api/sessions` | `{ "limit": 20 }` recent sessions |
+| GET | `/api/sessions/years` | Years that have session data (ints) |
+| GET | `/api/sessions/years/{year}` | Sessions for that calendar year |
+
+`POST /api/sessions` (`{ "limit": 20 }`) was removed by Lekkerladen and now returns 404.
+The web app lists recent sessions via `GET /api/sessions/years` and `GET /api/sessions/years/{year}`.
+Session objects still include `energyDeliveredKwh`, `startTime`, `endTime`, `sessionId`, and `chargerId`.
+As of 0.1.1 the integration uses the year endpoint (newest first). A failure there is logged and the rest of the dashboard still loads.
 
 Chargers use ids like `tesla:<remoteId>`. Session `chargerId` matches `remoteId`.
 

@@ -16,14 +16,16 @@ PATH_SIGN_IN: Final = f"{AUTH_BASE}/sign-in/email-otp"
 PATH_GET_SESSION: Final = f"{AUTH_BASE}/get-session"
 
 PATH_CHARGERS: Final = f"{API_URL}/api/chargers"
-PATH_SESSIONS: Final = f"{API_URL}/api/sessions"
+PATH_SESSIONS: Final = f"{API_URL}/api/sessions"  # removed by Lekkerladen; kept for reference
+PATH_SESSIONS_YEARS: Final = f"{API_URL}/api/sessions/years"
+PATH_SESSIONS_YEAR: Final = f"{API_URL}/api/sessions/years"  # + /{year}
 PATH_SESSIONS_MONTHLY: Final = f"{API_URL}/api/sessions/monthly"
 PATH_ERE_RATE: Final = f"{API_URL}/api/ere-rate"
 PATH_PROFILE: Final = f"{API_URL}/api/profiles/current"
 PATH_CONTRACT: Final = f"{API_URL}/api/contracts/current"
 PATH_ACCOUNTS: Final = f"{API_URL}/api/accounts"
 
-VERSION: Final = "0.1.0"
+VERSION: Final = "0.1.1"
 USER_AGENT: Final = f"HomeAssistant-Lekkerladen/{VERSION}"
 OTP_TYPE_SIGN_IN: Final = "sign-in"
 OTP_LENGTH: Final = 6

@@ -14,11 +14,18 @@ from lekkerladen_noha.const import (
     PATH_ERE_RATE,
     PATH_GET_SESSION,
     PATH_PROFILE,
-    PATH_SESSIONS,
+    PATH_SESSIONS_YEAR,
     PATH_SESSIONS_MONTHLY,
 )
 
 OMIT = object()
+
+
+def sessions_year_url(year: int | None = None) -> str:
+    """Current Lekkerladen year-sessions URL (POST /api/sessions was removed)."""
+    from datetime import datetime
+
+    return f"{PATH_SESSIONS_YEAR}/{year if year is not None else datetime.now().year}"
 
 
 class RawBody:
@@ -166,8 +173,8 @@ def install_dashboard(
         mandate["commissionRate"] = commission
     session.add("GET", PATH_CONTRACT, 200, {"mandate": mandate})
     session.add(
-        "POST",
-        PATH_SESSIONS,
+        "GET",
+        sessions_year_url(),
         200,
         {
             "data": [

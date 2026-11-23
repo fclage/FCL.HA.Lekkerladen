@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+from datetime import datetime
 from typing import Any
 
 from aiohttp import ClientError, ClientSession, ClientTimeout
@@ -18,7 +19,7 @@ from .const import (
     PATH_GET_SESSION,
     PATH_PROFILE,
     PATH_SEND_OTP,
-    PATH_SESSIONS,
+    PATH_SESSIONS_YEAR,
     PATH_SESSIONS_MONTHLY,
     PATH_SIGN_IN,
     SESSION_PAGE_LIMIT,
@@ -114,19 +115,36 @@ class LekkerladenApi:
                 return data["months"]
         return []
 
-    async def get_sessions(self, limit: int = SESSION_PAGE_LIMIT) -> list[dict[str, Any]]:
-        payload = await self._request("POST", PATH_SESSIONS, json_body={"limit": limit})
+    async def get_sessions(self, limit: int | None = SESSION_PAGE_LIMIT) -> list[dict[str, Any]]:
+        """Recent sessions for the current year.
+
+        Lekkerladen removed POST /api/sessions (now 404). The web app uses
+        GET /api/sessions/years and GET /api/sessions/years/{year}. Objects
+        still include energyDeliveredKwh, startTime, endTime, sessionId,
+        chargerId.
+        """
+        year = datetime.now().year
+        payload = await self._request("GET", f"{PATH_SESSIONS_YEAR}/{year}")
+        sessions: list[dict[str, Any]] = []
         if isinstance(payload, dict):
             data = payload.get("data")
             if isinstance(data, list):
-                return data
-        return []
+                sessions = [item for item in data if isinstance(item, dict)]
+        sessions.sort(key=lambda item: item.get("startTime") or item.get("endTime") or "", reverse=True)
+        if limit is not None:
+            return sessions[:limit]
+        return sessions
 
     async def fetch_dashboard(self) -> dict[str, Any]:
         """One poll: session + account/charger/session/rate payloads."""
         session = await self.get_session()
         if not session or not session.get("session"):
             raise LekkerladenAuthError("No active Lekkerladen session")
+        try:
+            sessions = await self.get_sessions(limit=None)
+        except LekkerladenCannotConnect as err:
+            _LOGGER.warning("Lekkerladen sessions list failed (%s); continuing without per-charger sessions", err)
+            sessions = []
         return {
             "auth_session": session,
             "profile": await self.get_profile(),
@@ -135,7 +153,7 @@ class LekkerladenApi:
             "monthly": await self.get_sessions_monthly(),
             "ere_rate": await self.get_ere_rate(),
             "contract": await self.get_contract(),
-            "sessions": await self.get_sessions(),
+            "sessions": sessions,
         }
 
     async def _request(

@@ -7,7 +7,7 @@ import unittest
 import ha_free  # noqa: E402, F401  # registers lekkerladen_noha package
 from aiohttp import ClientError  # noqa: E402
 
-from fakes import FakeSession, RawBody  # noqa: E402
+from fakes import FakeSession, RawBody, sessions_year_url  # noqa: E402
 from lekkerladen_noha.api import (  # noqa: E402
     LekkerladenApi,
     _error_message,
@@ -23,7 +23,6 @@ from lekkerladen_noha.const import (  # noqa: E402
     PATH_GET_SESSION,
     PATH_PROFILE,
     PATH_SEND_OTP,
-    PATH_SESSIONS,
     PATH_SESSIONS_MONTHLY,
     PATH_SIGN_IN,
 )
@@ -182,11 +181,15 @@ class ApiBranchTest(unittest.IsolatedAsyncioTestCase):
         session.add("GET", PATH_SESSIONS_MONTHLY, 200, ["nope"])
         self.assertEqual(await api.get_sessions_monthly(), [])
 
-        session.add("POST", PATH_SESSIONS, 200, {"data": [{"sessionId": "s1"}]})
+        year_url = sessions_year_url()
+        session.add("GET", year_url, 200, {"data": [
+            {"sessionId": "s-old", "startTime": "2026-01-01T10:00:00Z"},
+            {"sessionId": "s1", "startTime": "2026-08-02T10:00:00Z"},
+        ]})
         self.assertEqual((await api.get_sessions())[0]["sessionId"], "s1")
-        session.add("POST", PATH_SESSIONS, 200, {"data": {"sessionId": "s1"}})
+        session.add("GET", year_url, 200, {"data": {"sessionId": "s1"}})
         self.assertEqual(await api.get_sessions(), [])
-        session.add("POST", PATH_SESSIONS, 200, ["nope"])
+        session.add("GET", year_url, 200, ["nope"])
         self.assertEqual(await api.get_sessions(), [])
 
     async def test_fetch_dashboard_and_missing_session(self) -> None:
@@ -206,6 +209,16 @@ class ApiBranchTest(unittest.IsolatedAsyncioTestCase):
         session.add("GET", PATH_GET_SESSION, 200, {"user": {"id": "u"}})
         with self.assertRaises(LekkerladenAuthError):
             await api.fetch_dashboard()
+
+    async def test_fetch_dashboard_sessions_404_is_nonfatal(self) -> None:
+        api, session = self._api()
+        from fakes import install_dashboard
+
+        install_dashboard(session, token="tok-live")
+        session.add("GET", sessions_year_url(), 404, "404 Not Found")
+        dashboard = await api.fetch_dashboard()
+        self.assertEqual(dashboard["sessions"], [])
+        self.assertEqual(dashboard["monthly"][0]["yearMonth"], "2026-08")
 
     async def test_timeout_and_client_error(self) -> None:
         api, session = self._api()
